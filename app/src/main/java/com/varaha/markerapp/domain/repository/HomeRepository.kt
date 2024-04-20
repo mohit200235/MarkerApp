@@ -7,4 +7,5 @@ abstract class HomeRepository {
     abstract fun getAllMarkerFromLocalDb() : Flow<List<MarkerData>>
     abstract fun saveMarkerToLocalDb(markerData: MarkerData)
     abstract fun deleteMarkerFromLocalDb(markerData: MarkerData)
+    abstract fun updateMarkerToLocalDb(markerData: MarkerData)
 }

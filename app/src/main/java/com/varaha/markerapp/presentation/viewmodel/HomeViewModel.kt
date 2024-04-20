@@ -1,12 +1,18 @@
 package com.varaha.markerapp.presentation.viewmodel
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
+import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.varaha.markerapp.data.localdb.MarkerData
 import com.varaha.markerapp.domain.repository.HomeRepository
 import com.varaha.markerapp.domain.responseState.ResponseState
@@ -57,19 +63,15 @@ class HomeViewModel @Inject constructor(
                     1,
                 )
                 _markerAddressDetail.value =
-                    if(!addresses.isNullOrEmpty()){
+                    if (!addresses.isNullOrEmpty()) {
                         ResponseState.Success(addresses[0])
-                    }else{
+                    } else {
                         ResponseState.Error(Exception("Address is null"))
                     }
             }
         } catch (e: Exception) {
             _markerAddressDetail.value = ResponseState.Error(e)
         }
-    }
-
-    fun resetMarkerAddressDetail() {
-        _markerAddressDetail.value = ResponseState.Idle
     }
 
     fun getAllDataFromLocalDb() {
@@ -88,9 +90,35 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteMarkerFromDb(markerData: MarkerData){
-        viewModelScope.launch ( Dispatchers.IO ){
+    fun deleteMarkerFromDb(markerData: MarkerData) {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.deleteMarkerFromLocalDb(markerData)
+        }
+    }
+
+    fun updateMarkerDb(
+        id : Int,
+        name: String,
+        city: String,
+        relation: String,
+        age: String,
+        address: String,
+        latLong: String
+    ) {
+        val stringArray = latLong.split(",")
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.saveMarkerToLocalDb(
+                MarkerData(
+                    id = id,
+                    name = name,
+                    city = city,
+                    relation = relation,
+                    age = age,
+                    address = address,
+                    latitude = stringArray[0],
+                    longitude = stringArray[1],
+                )
+            )
         }
     }
 
@@ -117,4 +145,22 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
+    fun bitmapDescriptor(
+        context: Context,
+        vectorResId: Int
+    ): BitmapDescriptor? {
+            val drawable = ContextCompat.getDrawable(context, vectorResId) ?: return null
+            drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+            val bm = Bitmap.createBitmap(
+                drawable.intrinsicWidth,
+                drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            // draw it onto the bitmap
+            val canvas = android.graphics.Canvas(bm)
+            drawable.draw(canvas)
+            return BitmapDescriptorFactory.fromBitmap(bm)
+    }
+
 }

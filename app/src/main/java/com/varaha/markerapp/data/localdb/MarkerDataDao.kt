@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,4 +19,7 @@ interface MarkerDataDao {
 
     @Delete
     fun delete(markerData : MarkerData)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun update(markerData: MarkerData)
 }

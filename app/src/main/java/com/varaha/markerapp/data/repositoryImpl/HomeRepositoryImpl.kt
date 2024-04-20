@@ -19,4 +19,8 @@ class HomeRepositoryImpl @Inject constructor(
     override fun deleteMarkerFromLocalDb(markerData: MarkerData) {
         markerDataDao.delete(markerData)
     }
+
+    override fun updateMarkerToLocalDb(markerData: MarkerData) {
+        markerDataDao.update(markerData)
+    }
 }
