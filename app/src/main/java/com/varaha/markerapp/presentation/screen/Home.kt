@@ -23,7 +23,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.varaha.markerapp.R
 import com.varaha.markerapp.data.localdb.MarkerData
 import com.varaha.markerapp.domain.responseState.ResponseState
-//import com.varaha.markerapp.presentation.component.AlertDialogComponent
 import com.varaha.markerapp.presentation.component.DialogDataShow
 import com.varaha.markerapp.presentation.ui.state.HomeState
 import com.varaha.markerapp.presentation.viewmodel.HomeViewModel
@@ -66,6 +65,8 @@ fun HomeScreenRoute(
         }
     )
 
+
+    //show marker when w have the address from lat long
     if (addressState is ResponseState.Success && showPreview.value) {
         val address = (addressState as ResponseState.Success<Address>).data
         addressToShow.value = address.locality + " " + address.subAdminArea
@@ -74,7 +75,7 @@ fun HomeScreenRoute(
         showPreview.value = false
     }
 
-
+    //check when the dialog value is true
     if (openShowDataDialog.value) {
         DialogDataShow(
             MarkerData.value!!,
@@ -96,6 +97,7 @@ fun HomeScreen(
     onMarkerClick: (MarkerData) -> Unit,
     onMapClick: (LatLng) -> Unit
 ) {
+    //get the current context
     val context: Context = LocalContext.current
 
     val defaultIndiaLocation = LatLng(23.473324, 77.947998)
@@ -119,11 +121,16 @@ fun HomeScreen(
                             item.longitude!!.toDouble()
                         )
                     ),
+
+                    //change the values and icon when marker is saved
+
                     title = if (!item.name.isNullOrBlank()) "Name : " + item.name else "Address : " + item.address,
                     snippet = if (!item.name.isNullOrBlank()) "Relation : " + item.relation else "Lat : " + item.latitude.toFloat() + " Long : " + item.longitude,
                     icon = if (item.name.isNullOrBlank())
+                        //get the other icon when marker not saved
                         viewModel.bitmapDescriptor(context, R.drawable.location)
                     else null,
+                    //show the info window on click
                     onInfoWindowClick = {
                         onMarkerClick.invoke(item)
                     }

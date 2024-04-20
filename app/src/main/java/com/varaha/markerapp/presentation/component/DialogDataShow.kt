@@ -1,6 +1,5 @@
 package com.varaha.markerapp.presentation.component
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,9 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -59,7 +56,6 @@ fun CustomShowDialog(
     onDismissUpdate: () -> Unit,
 ) {
 
-    val openDeleteConfirmDialog = remember { mutableStateOf(false) }
 
     var name by remember {
         mutableStateOf(markerData.name ?: "")
@@ -72,18 +68,6 @@ fun CustomShowDialog(
     }
     var age by remember {
         mutableStateOf(markerData.age ?: "")
-    }
-
-    if (openDeleteConfirmDialog.value) {
-        OpenDeleteConfirmDialog(
-            onDismissRequest = {
-                openDeleteConfirmDialog.value = false
-            },
-            onConfirmDelete = {
-                openDeleteConfirmDialog.value = false
-                viewModel.deleteMarkerFromDb(markerData)
-            }
-        )
     }
 
     Column(
@@ -156,7 +140,8 @@ fun CustomShowDialog(
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                 onClick = {
-                    openDeleteConfirmDialog.value = true
+                    onDismissUpdate()
+                    viewModel.deleteMarkerFromDb(markerData)
                 },
                 modifier = Modifier
                     .weight(1f)

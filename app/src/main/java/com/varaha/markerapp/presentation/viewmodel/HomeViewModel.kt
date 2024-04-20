@@ -43,6 +43,8 @@ class HomeViewModel @Inject constructor(
     private val _markerAddressDetail = MutableStateFlow<ResponseState<Address>>(ResponseState.Idle)
     val markerAddressDetail = _markerAddressDetail.asStateFlow()
 
+
+    //fetch the address with latlong
     fun getMarkerAddressDetails(lat: Double, long: Double, context: Context) {
         _markerAddressDetail.value = ResponseState.Loading
         try {
@@ -90,12 +92,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    //delete functionality
     fun deleteMarkerFromDb(markerData: MarkerData) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteMarkerFromLocalDb(markerData)
         }
     }
 
+    //update the latlong with other details
     fun updateMarkerDb(
         id : Int,
         name: String,
@@ -122,6 +126,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+
+    //save the latlong first to show the marker
     fun saveLatLongToLocalDb(
         name: String,
         city: String,
@@ -146,6 +152,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    //change the drawable to bitmap
     fun bitmapDescriptor(
         context: Context,
         vectorResId: Int

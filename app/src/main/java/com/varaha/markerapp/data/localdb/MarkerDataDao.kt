@@ -19,7 +19,4 @@ interface MarkerDataDao {
 
     @Delete
     fun delete(markerData : MarkerData)
-
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(markerData: MarkerData)
 }
